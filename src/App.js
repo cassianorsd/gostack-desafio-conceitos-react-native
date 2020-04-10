@@ -15,21 +15,14 @@ export default function App() {
 
   useEffect(()=>{
     api.get('/repositories')
-    .then(res=>res.data)
-    .then(data=>{
-      setRepositories(data);
-    })
+    .then(res=>setRepositories(res.data))
   },[])
 
   async function handleLikeRepository(id) {
     const index = repositories.findIndex(item=>item.id===id);
     if(index < 0) return false;
-    const response = await api.post(`/repositories/${id}/like`)
-    const updatedRepo = response.data;
-    console.log(updatedRepo);
-    var repoList = repositories;
-    repoList[index] = updatedRepo;
-    setRepositories([...repoList]);
+    const { data } = await api.post(`/repositories/${id}/like`);
+    setRepositories(repositories.map(item=>item.id===id ? data : item))
   }
 
   return (
